@@ -55,8 +55,8 @@ end
  for i = 1:n(1)
    v  = nodes(i);
    new_dist = sqrt((p_rand(1,1)-v.coord(1))^2+(p_rand(1,2)-vertecies(2))^2);
-   if new_dist< q_new.cost
-       q_new.cost = new_dist + v.cost;
+   if new_dist< q_nearest.cost
+       q_nearest.cost = new_dist;
        q_nearest.coord = v.coord;
    end
  end
