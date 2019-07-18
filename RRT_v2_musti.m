@@ -9,7 +9,7 @@ function RRT_v2_musti()
     obstacle(1,:,:) = [1,1;-1,1];
     obstacle(2,:,:) = [-1,1;-1,-1];
     obstacle(3,:,:) = [-1,-1;1,-1];
-    obstacle(1,:,:) = [1,-1;1,1];
+    obstacle(4,:,:) = [1,-1;1,1];
     offset = 0;
     obstacle = obstacle + ones(4,2,2)*offset;
 
@@ -47,6 +47,7 @@ function RRT_v2_musti()
     scatter(origin(1), origin(2), 45, '*','r','LineWidth',1); hold on;
     scatter(vertex(:,1), vertex(:,2), 10,linspace(1,10,length(vertex(:,1))),'filled'); hold on;
     plot(edges.x', edges.y');
+    plot(obstacle(:,:,1),obstacle(:,:,2))
 
 end
 
@@ -85,26 +86,26 @@ end
     for i = 1:length(obstacle)
          p1 = [obstacle(i,1,1),obstacle(i,2,1)];
          q1 = [obstacle(i,1,2),obstacle(i,2,2)];
-         o1 = orientation(p_nearest,p1,p_new);
-         o2 = orientation(p_nearest,q1,p_new);
-         o3 = orientation(p1,p_nearest,q1);     
-         o4 = orientation(p1,p_new,q1);
+         o1 = orientation(p_nearest,p_new,p1);
+         o2 = orientation(p_nearest,p_new,q1);
+         o3 = orientation(p1,q1,p_nearest);     
+         o4 = orientation(p1,q1,p_new);
 
         if (o1 ~= o2 && o3 ~= o4)
             collide = 0;
             return;
         end
          collide = 0;
-         if (o1 == 0 && onsegment(p_nearest,p_new,p1))
+         if (o1 == 0 && onsegment(p_nearest,p1,p_new))
              return;
          end
-        if (o2 == 0 && onsegment(p_nearest,p_new,q1))
+        if (o2 == 0 && onsegment(p_nearest,q1,p_new))
          return;
         end
-        if (o3 == 0 && onsegment(p1,q1,p_nearest))
+        if (o3 == 0 && onsegment(p1,p_nearest,q1))
          return;
         end
-        if (o4 == 0 && onsegment(p1,q1,p_new))
+        if (o4 == 0 && onsegment(p1,p_new,q1))
          return;
         end
         collide = 1;
