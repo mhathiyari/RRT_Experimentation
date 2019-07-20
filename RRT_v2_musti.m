@@ -1,4 +1,7 @@
 function RRT_v2_musti()
+    clc
+    close all
+
     width = 10;
     height = 10;
 
@@ -24,13 +27,12 @@ function RRT_v2_musti()
    
     vert_count = 1;
     edge_count = 0;
+    %% Algorithm
      for i = 1:iterations
          q_new.coord = random_point(width,height);
          [q_nearest,q_new] = v_nearest(q_new,nodes);
-         q_nearest.coord
          q_new = steer(q_new,q_nearest);
          if collision_check(q_new.coord,q_nearest.coord,obstacle)
-%              q_new.cost = cost;
              q_new.parent = q_nearest.coord;
              nodes = [nodes q_new];
          end
