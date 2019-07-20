@@ -16,7 +16,7 @@ function RRT_Star_musti()
     offset = 0;
     obstacle = obstacle + ones(4,2,2)*offset;
 
-    iterations = 400 ;
+    iterations = 1000 ;
     vertecies = origin; 
     q_start.coord = origin;
     q_start.cost = 0;
@@ -42,34 +42,12 @@ function RRT_Star_musti()
              % Find nearby nodes
              near_nodes = nearby (nodes , q_new);
              % Revise point based on minimal cost of the nearby nodes
-             [q_new,q_min] = revise_cost(near_nodes,q_new,obstacle);
+             [q_new,q_min] = revise_cost(near_nodes,q_new,obstacle,q_min);
              q_new.parent = q_min.coord;
              nodes = [nodes q_new];
              % Finding nearby nodes that benifit from rewiring 
-             for i = 1:length(near_nodes); 
-                 if near_nodes(i).coord == q_min.coord
-                     continue
-                 end
-                 temp_cost = (q_new.cost + distance(q_new.coord , near_nodes(i).coord));
-                 if near_nodes(i).cost > temp_cost;
-                     if collision_check(q_new.coord,near_nodes(i).coord,obstacle)
-                         near_nodes(i).parent = q_new.coord;
-                         near_nodes(i).cost = temp_cost;
-                     end
-                 end
-             end
-             % Modifying the new nearby nodes in the actual node list
-                for i = 1:length(near_nodes)
-                    if near_nodes(i).parent == q_new.coord
-                        for j = 1:length(nodes)
-                            if nodes(j).coord == near_nodes(i).coord
-                                nodes(i).parent = near_nodes(i).parent;
-                                nodes(i).cost = near_nodes(i).cost;
-                            end
-                        end
-                    end
-                end
-%              nodes = rewire(q_nearby, q_new,obstacle ,q_nearest , nodes);
+             % TODO Bug in collision check of rewire
+             nodes = rewire(near_nodes, q_new, obstacle , nodes , q_min);
          end
          
      end
@@ -90,7 +68,7 @@ function RRT_Star_musti()
 
 end
 
-function [q_new,q_min] = revise_cost(near_nodes,q_new,obstacle)
+function [q_new,q_min] = revise_cost(near_nodes,q_new,obstacle,q_min)
  for i = 1:length(near_nodes);
      if collision_check(q_new.coord,near_nodes(i).coord,obstacle)
          new_cost = near_nodes(i).cost + distance(q_new.coord,near_nodes(i).coord);
@@ -114,24 +92,27 @@ r = 0.5;
  end
 end
 
-function nodes = rewire(q_nearby, q_new,obstacle ,q_nearest , nodes)
-    p_rand = q_new.coord;
-    for i = 1:length(q_nearby)
-        if q_nearby(i).coord == q_nearest.coord
-            continue
-        end
-        cost_old = q_nearby(i).cost;
-        dist = sqrt((p_rand(1,1)-q_nearby(i).coord(1,1))^2+(p_rand(1,2)-q_nearby(i).coord(1,2))^2);
-        cost_new = q_new.cost + dist;
-        if cost_new < cost_old
-            if collision_check(q_new.coord,q_nearby(i).coord,obstacle)
-                q_nearby(i).parent = q_new.coord
+function nodes = rewire(near_nodes, q_new, obstacle , nodes , q_min)
+     for i = 1:length(near_nodes); 
+         if near_nodes(i).coord == q_min.coord; continue ; end;
+         temp_cost = (q_new.cost + distance(q_new.coord , near_nodes(i).coord));
+         if near_nodes(i).cost > temp_cost;
+             if collision_check(q_new.coord,near_nodes(i).coord,obstacle)
+                 near_nodes(i).parent = q_new.coord;
+                 near_nodes(i).cost = temp_cost;
+             end
+         end
+     end
+ % Modifying the new nearby nodes in the actual node list
+    for i = 1:length(near_nodes)
+        if near_nodes(i).parent == q_new.coord
+            for j = 1:length(nodes)
+                if nodes(j).coord == near_nodes(i).coord
+                    nodes(i).parent = near_nodes(i).parent;
+                    nodes(i).cost = near_nodes(i).cost;
+                end
             end
-        end 
-    end
-    for i = 1:length(q_nearby)
-        nodes(q_nearby(i).index).parent = q_nearby(i).parent;
-        nodes(q_nearby(i).index).cost = q_nearby(i).cost;
+        end
     end
 end
 
