@@ -16,7 +16,7 @@ function RRT_Star_musti()
     offset = 0;
     obstacle = obstacle + ones(4,2,2)*offset;
 
-    iterations = 400 ;
+    iterations = 800 ;
     vertecies = origin; 
     q_start.coord = origin;
     q_start.cost = 0;
@@ -36,7 +36,7 @@ function RRT_Star_musti()
          % Steer using dynamics constriants
          q_new = steer(q_new,q_nearest);
          % Collision Check
-         if collision_check(q_new.coord,q_nearest.coord,obstacle) && distance(q_new.coord,q_nearest.coord)< 3
+         if collision_check(q_new.coord,q_nearest.coord,obstacle) && distance_euc(q_new.coord,q_nearest.coord)< 3
              q_new.parent = q_nearest.coord;
              q_min = q_nearest;
              % Find nearby nodes
@@ -69,7 +69,7 @@ end
 
 function [q_new,q_min] = revise_cost(near_nodes,q_new,obstacle,q_min)
  for i = 1:length(near_nodes);
-         new_cost = near_nodes(i).cost + distance(q_new.coord,near_nodes(i).coord);
+         new_cost = near_nodes(i).cost + distance_euc(q_new.coord,near_nodes(i).coord);
          if new_cost < q_new.cost
             q_min = near_nodes(i);
             q_new.cost = new_cost;
@@ -82,7 +82,7 @@ near_nodes = [];
 r = 1;
  for i = 1 : length(nodes)
 %      if nodes(i).coord == q_new.parent; continue; end
-     dist = distance(q_new.coord, nodes(i).coord);
+     dist = distance_euc(q_new.coord, nodes(i).coord);
      if dist < r && collision_check(q_new.coord,nodes(i).coord,obstacle)
          near_nodes = [near_nodes nodes(i)];
      end
@@ -92,7 +92,7 @@ end
 function nodes = rewire(near_nodes, q_new, obstacle , nodes , q_min)
      for i = 1:length(near_nodes); 
          if near_nodes(i).coord == q_min.coord; continue ; end;
-         temp_cost = (q_new.cost + distance(q_new.coord , near_nodes(i).coord));
+         temp_cost = (q_new.cost + distance_euc(q_new.coord , near_nodes(i).coord));
          if near_nodes(i).cost > temp_cost;
              if collision_check(q_new.coord,near_nodes(i).coord,obstacle)
                  near_nodes(i).parent = q_new.coord;
@@ -143,6 +143,11 @@ end
     q_new.coord = round(q_new.coord,3);
     q_new.cost = q_new.cost;
     
+ end
+ 
+  function d = distance_euc(x1,x2)
+ d = sqrt((x1(1)-x2(1))^2+(x1(2)-x2(2))^2);
+ 
  end
  
  

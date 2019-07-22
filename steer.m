@@ -1,37 +1,40 @@
  function q_possible = steer(q_new,q_nearest)
-%     q_new.coord = round(q_new.coord,3);
-%     q_new.cost = q_new.cost;
+    q_new.coord = round(q_new.coord,3);
+    q_new.cost = q_new.cost;
     
     distance = inf;
     best_angle = 0 ; 
     steering_max = 0.58904862;
-    steering_inc = 0.0117809724
+    steering_inc = 0.0117809724;
 
-    for s = -steering_max:steering_inc:steering_inc
+    for s = -steering_max:steering_inc:steering_max
     [q_f] = new_state(q_nearest,s);
-    new_distance = distance(q_new.coord,q_f.coord) % doesnt look at theta diff for now
+    new_distance = distance_euc(q_new.coord,q_f.coord); % doesnt look at theta diff for now
     if distance > new_distance
        distance = new_distance;
-       best_angle = s;
+       q_possible.cost = distance;
+       q_possible.input = s;
+       q_possible.coord = q_f.coord;
     end
     end
         
  end
  
- function d = distance_euc(x1,x2)
- d = sqrt((x1.coord(1)-x2.coord(1)^2+(x1.coord(2)-x2.coord(2))^2);
  
- end
+  function d = distance_euc(x1,x2)
+ d = sqrt((x1(1)-x2(1))^2+(x1(2)-x2(2))^2);
  
- function [new_distance,q_f] = new_state(q_nearest,s)
+  end
+ 
+ function [q_f] = new_state(q_nearest,s)
  %RK4
  dt = 0.5;
- k1 = dynamics(q_nearest,s);
- k2 = dynamics(q_nearest+k1/2,s);
- k3 = dynamics(q_nearest+k2/2,s);
- k3 = dynamics(q_nearest+k3,s);
+ k1  = dynamics(q_nearest.coord,s);
+ k2 = dynamics(q_nearest.coord+k1.coord/2,s);
+ k3 = dynamics(q_nearest.coord+k2.coord./2,s);
+ k4 = dynamics(q_nearest.coord+k3.coord,s);
  
- q_f.coord = q_nearest.coord + dt/6*(k1+2*k2+2*k3+k4);
+ q_f.coord = q_nearest.coord + dt/6*(k1.coord+2*k2.coord+2*k3.coord+k4.coord);
  
  end
  
@@ -42,13 +45,13 @@ lr = 0.787;
 inertia = 1490.3;
 cf = 5146/2;
 cr = 3430/2;
-speed = 11.1;
+speed = 21.1;
  
- x =  x.coord(1);
- y = x.coord(2);
- theta = x.coord(3);
- vy = x.coord(4);
- r = x.coord(5);
+%  x =  x.coord(1);
+%  y = x.coord(2);
+ theta = x(3);
+ vy = x(4);
+ r = x(5);
  
  cosInput = cos(u);
  cosTheta = cos(theta);

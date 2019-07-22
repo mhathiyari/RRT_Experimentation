@@ -2,11 +2,11 @@ function RRT_Star_musti()
     clc
     close all
 
-    width = 10;
-    height = 10;
+    width = 1000;
+    height = 1000;
 
-    origin = [3,3];
-    goal = [8,8];
+    origin = [50,50,0,0,0];%[x,y,theta,vy,r]
+    goal = [8,8,0,0,0];
     % box
     obstacle = zeros(4,2,2);
     obstacle(1,:,:) = [1,1;-1,1];
@@ -14,15 +14,17 @@ function RRT_Star_musti()
     obstacle(3,:,:) = [-1,-1;1,-1];
     obstacle(4,:,:) = [1,-1;1,1];
     offset = 0;
-    obstacle = obstacle + ones(4,2,2)*offset;
+    obstacle = obstacle*100 + ones(4,2,2)*offset;
 
-    iterations = 400 ;
-    vertecies = origin; 
+    iterations = 8000 ;
     q_start.coord = origin;
+    q_start.input = 0;
     q_start.cost = 0;
     q_start.parent = origin;
     q_goal.cost = 0;
-    q.goal.coord = goal;
+    q_goal.coord = goal;
+    q_goal.input = 0;
+
     nodes(1) = q_start;
     
    
@@ -36,17 +38,17 @@ function RRT_Star_musti()
          % Steer using dynamics constriants
          q_new = steer(q_new,q_nearest);
          % Collision Check
-         if collision_check(q_new.coord,q_nearest.coord,obstacle) && distance_euc(q_new.coord,q_nearest.coord)< 3
+         if collision_check(q_new.coord,q_nearest.coord,obstacle) && distance_euc(q_new.coord,q_nearest.coord)< 1000
              q_new.parent = q_nearest.coord;
              q_min = q_nearest;
              % Find nearby nodes
-             near_nodes = nearby (nodes , q_new ,obstacle);
-             % Revise point based on minimal cost of the nearby nodes
-             [q_new,q_min] = revise_cost(near_nodes,q_new,obstacle,q_min);
-             q_new.parent = q_min.coord;
+%              near_nodes = nearby (nodes , q_new ,obstacle);
+%              % Revise point based on minimal cost of the nearby nodes
+%              [q_new,q_min] = revise_cost(near_nodes,q_new,obstacle,q_min);
+%              q_new.parent = q_min.coord;
              nodes = [nodes q_new];
              % Finding nearby nodes that benifit from rewiring 
-             nodes = rewire(near_nodes, q_new, obstacle , nodes , q_min);
+%              nodes = rewire(near_nodes, q_new, obstacle , nodes , q_min);
          end
          
      end
@@ -117,7 +119,8 @@ function [p_rand] = random_point(width,height)
  offset = [0,0] - [width, height]./2;
  x_rand = width*rand()+offset(1);
  y_rand = height*rand()+offset(2);
- p_rand = [x_rand,y_rand];
+ theta_rand = 2*pi*rand();
+ p_rand = [x_rand,y_rand,theta_rand,0,0];
 end
 
  function [q_nearest,q_new] = v_nearest(q_new,nodes)
@@ -137,10 +140,9 @@ end
  end
  q_new.cost = q_new.cost + cost_near ;
  % Now find the nearest point according to local cost
- end
- 
- function d = distance_euc(x1,x2)
- d = sqrt((x1.coord(1)-x2.coord(1)^2+(x1.coord(2)-x2.coord(2))^2);
+ end 
+  function d = distance_euc(x1,x2)
+ d = sqrt((x1(1)-x2(1))^2+(x1(2)-x2(2))^2);
  
  end
  
