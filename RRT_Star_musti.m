@@ -16,7 +16,7 @@ function RRT_Star_musti()
     offset = 0;
     obstacle = obstacle + ones(4,2,2)*offset;
 
-    iterations = 1000 ;
+    iterations = 400 ;
     vertecies = origin; 
     q_start.coord = origin;
     q_start.cost = 0;
@@ -36,17 +36,16 @@ function RRT_Star_musti()
          % Steer using dynamics constriants
          q_new = steer(q_new,q_nearest);
          % Collision Check
-         if collision_check(q_new.coord,q_nearest.coord,obstacle)
+         if collision_check(q_new.coord,q_nearest.coord,obstacle) && distance(q_new.coord,q_nearest.coord)< 3
              q_new.parent = q_nearest.coord;
              q_min = q_nearest;
              % Find nearby nodes
-             near_nodes = nearby (nodes , q_new);
+             near_nodes = nearby (nodes , q_new ,obstacle);
              % Revise point based on minimal cost of the nearby nodes
              [q_new,q_min] = revise_cost(near_nodes,q_new,obstacle,q_min);
              q_new.parent = q_min.coord;
              nodes = [nodes q_new];
              % Finding nearby nodes that benifit from rewiring 
-             % TODO Bug in collision check of rewire
              nodes = rewire(near_nodes, q_new, obstacle , nodes , q_min);
          end
          
@@ -70,23 +69,21 @@ end
 
 function [q_new,q_min] = revise_cost(near_nodes,q_new,obstacle,q_min)
  for i = 1:length(near_nodes);
-     if collision_check(q_new.coord,near_nodes(i).coord,obstacle)
          new_cost = near_nodes(i).cost + distance(q_new.coord,near_nodes(i).coord);
          if new_cost < q_new.cost
             q_min = near_nodes(i);
             q_new.cost = new_cost;
          end
-     end
  end
 end
 
-function near_nodes = nearby (nodes , q_new)
+function near_nodes = nearby (nodes , q_new,obstacle)
 near_nodes = [];
-r = 0.5;
- for i = 1 : length(nodes)-1
-     if nodes(i).coord == q_new.parent; continue; end
+r = 1;
+ for i = 1 : length(nodes)
+%      if nodes(i).coord == q_new.parent; continue; end
      dist = distance(q_new.coord, nodes(i).coord);
-     if dist < r
+     if dist < r && collision_check(q_new.coord,nodes(i).coord,obstacle)
          near_nodes = [near_nodes nodes(i)];
      end
  end
@@ -105,11 +102,11 @@ function nodes = rewire(near_nodes, q_new, obstacle , nodes , q_min)
      end
  % Modifying the new nearby nodes in the actual node list
     for i = 1:length(near_nodes)
-        if near_nodes(i).parent == q_new.coord
+        if (near_nodes(i).parent == q_new.coord) & (near_nodes(i).coord ~= q_min.coord)
             for j = 1:length(nodes)
-                if nodes(j).coord == near_nodes(i).coord
-                    nodes(i).parent = near_nodes(i).parent;
-                    nodes(i).cost = near_nodes(i).cost;
+                if nodes(j).coord == near_nodes(i).coord %& collision_check(q_new.coord,near_nodes(i).coord,obstacle)
+                    nodes(j).parent = near_nodes(i).parent;
+                    nodes(j).cost = near_nodes(i).cost;
                 end
             end
         end
