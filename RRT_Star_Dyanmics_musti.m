@@ -5,10 +5,10 @@ function RRT_Star_musti()
     width = 1000;
     height = 1000;
 
-    origin = [50,50,0,0,0];%[x,y,theta,vy,r]
+    origin = [103,150,0,0,0];%[x,y,theta,vy,r]
     goal = [8,8,0,0,0];
     % box
-    obstacle = zeros(4,2,2);
+    obstacle = zeros(4,2,2); 
     obstacle(1,:,:) = [1,1;-1,1];
     obstacle(2,:,:) = [-1,1;-1,-1];
     obstacle(3,:,:) = [-1,-1;1,-1];
@@ -16,7 +16,7 @@ function RRT_Star_musti()
     offset = 0;
     obstacle = obstacle*100 + ones(4,2,2)*offset;
 
-    iterations = 8000 ;
+    iterations = 4000 ;
     q_start.coord = origin;
     q_start.input = 0;
     q_start.cost = 0;
@@ -33,10 +33,12 @@ function RRT_Star_musti()
      for i = 1:iterations
          % Pick a random point
          q_new.coord = random_point(width,height);
+%          rand_cord = q_new.coord
          % Find the neareast node
          [q_nearest,q_new] = v_nearest(q_new,nodes);
          % Steer using dynamics constriants
          q_new = steer(q_new,q_nearest);
+%          dynamics_cord = q_new.coord
          % Collision Check
          if collision_check(q_new.coord,q_nearest.coord,obstacle) && distance_euc(q_new.coord,q_nearest.coord)< 1000
              q_new.parent = q_nearest.coord;
@@ -54,18 +56,20 @@ function RRT_Star_musti()
      end
 %% Plot code
 
-     for i = 1:length(nodes)
-     vertex(i,:) = nodes(i).coord;
-     parent(i,:) = nodes(i).parent;
-     edges.x(i,:) = [vertex(i,1),parent(i,1)];
-     edges.y(i,:) = [vertex(i,2),parent(i,2)];
-     end
-     
-    figure('name', 'RRT basic');
-    scatter(origin(1), origin(2), 45, '*','r','LineWidth',1); hold on;
-    scatter(vertex(:,1), vertex(:,2), 10,linspace(1,10,length(vertex(:,1))),'filled'); hold on;
-    plot(edges.x', edges.y');
-    plot(obstacle(:,:,1),obstacle(:,:,2))
+     plot_dynamics_rrt(nodes,obstacle,origin)
+
+%      for i = 1:length(nodes)
+%      vertex(i,:) = nodes(i).coord;
+%      parent(i,:) = nodes(i).parent;
+%      edges.x(i,:) = [vertex(i,1),parent(i,1)];
+%      edges.y(i,:) = [vertex(i,2),parent(i,2)];
+%      end
+%      
+%     figure('name', 'RRT basic');
+%     scatter(origin(1), origin(2), 45, '*','r','LineWidth',1); hold on;
+%     scatter(vertex(:,1), vertex(:,2), 10,linspace(1,10,length(vertex(:,1))),'filled'); hold on;
+%     plot(edges.x', edges.y');
+%     plot(obstacle(:,:,1),obstacle(:,:,2))
 
 end
 
