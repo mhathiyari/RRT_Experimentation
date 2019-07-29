@@ -25,7 +25,10 @@ function plot_dynamics_rrt(nodes,obstacle,origin,path)
         plot(points(:,1),points(:,2)); hold on;
     end
 %     plot(edges.x', edges.y');
-    scatter(path(:).coord(1), path(:).coord(2), 45, '*','b','LineWidth',1); hold on;
+    for i = 1:length(path)
+        path_points(i,:) = path(i).coord(1:2);
+    end
+    scatter(path_points(:,1), path_points(:,2), 45, '+','b','LineWidth',1); hold on;
     plot(obstacle(:,:,1),obstacle(:,:,2))
 
 

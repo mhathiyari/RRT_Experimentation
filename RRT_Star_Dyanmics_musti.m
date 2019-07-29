@@ -6,7 +6,7 @@ function RRT_Star_musti()
     height = 1000;
 
     origin = [103,150,0,0,0];%[x,y,theta,vy,r]
-    goal = [0,150,0,0,0];
+    goal = [-400,-400,0,0,0];
     % box
     obstacle = zeros(4,2,2); 
     obstacle(1,:,:) = [1,1;-1,1];
@@ -16,7 +16,7 @@ function RRT_Star_musti()
     offset = 0;
     obstacle = obstacle*100 + ones(4,2,2)*offset;
 
-    iterations = 900 ;
+    iterations = 9000 ;
     q_start.coord = origin;
     q_start.input = 0;
     q_start.cost = 0;
@@ -26,7 +26,7 @@ function RRT_Star_musti()
     q_goal.input = 0;
 
     nodes(1) = q_start;
-    
+    tic
    
     %% Algorithm
     
@@ -57,6 +57,7 @@ function RRT_Star_musti()
              break
          end 
      end
+     toc
 %% Plot code
 
      plot_dynamics_rrt(nodes,obstacle,origin,path)
@@ -79,7 +80,7 @@ end
 function prox = goal_prox (q_new,q_goal)
 prox = 0;
 dist = distance_euc(q_new.coord,q_goal.coord);
-if (dist < 75)
+if (dist < 10)
     prox = 1;
 end
 end
