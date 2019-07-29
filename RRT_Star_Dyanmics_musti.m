@@ -6,7 +6,7 @@ function RRT_Star_musti()
     height = 1000;
 
     origin = [103,150,0,0,0];%[x,y,theta,vy,r]
-    goal = [8,8,0,0,0];
+    goal = [0,150,0,0,0];
     % box
     obstacle = zeros(4,2,2); 
     obstacle(1,:,:) = [1,1;-1,1];
@@ -16,7 +16,7 @@ function RRT_Star_musti()
     offset = 0;
     obstacle = obstacle*100 + ones(4,2,2)*offset;
 
-    iterations = 4000 ;
+    iterations = 900 ;
     q_start.coord = origin;
     q_start.input = 0;
     q_start.cost = 0;
@@ -52,11 +52,14 @@ function RRT_Star_musti()
              % Finding nearby nodes that benifit from rewiring 
 %              nodes = rewire(near_nodes, q_new, obstacle , nodes , q_min);
          end
-         
+         if(goal_prox(q_new,q_goal))
+             path = goal_path(nodes,q_goal);
+             break
+         end 
      end
 %% Plot code
 
-     plot_dynamics_rrt(nodes,obstacle,origin)
+     plot_dynamics_rrt(nodes,obstacle,origin,path)
 
 %      for i = 1:length(nodes)
 %      vertex(i,:) = nodes(i).coord;
@@ -71,6 +74,34 @@ function RRT_Star_musti()
 %     plot(edges.x', edges.y');
 %     plot(obstacle(:,:,1),obstacle(:,:,2))
 
+end
+
+function prox = goal_prox (q_new,q_goal)
+prox = 0;
+dist = distance_euc(q_new.coord,q_goal.coord);
+if (dist < 75)
+    prox = 1;
+end
+end
+
+%% need to implement a better way to search the shortest path using a very naive approach right now
+function path = goal_path(nodes,q_goal)
+    q_goal.parent = nodes(length(nodes)).coord;
+    path = q_goal;
+    q_next = q_goal;
+    q_next.coord(1:2)
+    nodes(1).coord(1:2)
+    while(q_next.coord(1) ~= nodes(1).coord(1) || q_next.coord(2) ~= nodes(1).coord(2) )
+       for i = 1:length(nodes)
+           
+           if nodes(i).coord == path(1).parent
+               q_next = nodes(i);
+               break
+           end
+       end
+       path = [q_next path]; 
+    end
+    
 end
 
 function [q_new,q_min] = revise_cost(near_nodes,q_new,obstacle,q_min)

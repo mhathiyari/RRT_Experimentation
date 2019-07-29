@@ -1,4 +1,4 @@
-function plot_dynamics_rrt(nodes,obstacle,origin)
+function plot_dynamics_rrt(nodes,obstacle,origin,path)
      for i = 1:length(nodes)
          vertex(i,:) = nodes(i).coord(1:2);
          parent(i,:) = nodes(i).parent;
@@ -25,6 +25,7 @@ function plot_dynamics_rrt(nodes,obstacle,origin)
         plot(points(:,1),points(:,2)); hold on;
     end
 %     plot(edges.x', edges.y');
+    scatter(path(:).coord(1), path(:).coord(2), 45, '*','b','LineWidth',1); hold on;
     plot(obstacle(:,:,1),obstacle(:,:,2))
 
 

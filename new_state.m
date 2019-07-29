@@ -23,8 +23,8 @@ lr = 0.787;
 inertia = 1490.3;
 cf = 5146/2;
 cr = 3430/2;
-speed = 20.1;
- 
+speed = 10.1;
+  
 %  x =  x.coord(1);
 %  y = x.coord(2);
  theta = x(3);
