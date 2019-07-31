@@ -24,8 +24,9 @@ function RRT_Star_musti()
     q_goal.cost = 0;
     q_goal.coord = goal;
     q_goal.input = 0;
-
+    [iterations,q_start,q_goal,obstacle,width,height,origin,goal]= map('maze1');
     nodes(1) = q_start;
+    path = q_start;
     tic
    
     %% Algorithm
@@ -74,6 +75,45 @@ function RRT_Star_musti()
 %     scatter(vertex(:,1), vertex(:,2), 10,linspace(1,10,length(vertex(:,1))),'filled'); hold on;
 %     plot(edges.x', edges.y');
 %     plot(obstacle(:,:,1),obstacle(:,:,2))
+
+end
+
+function [iterations,q_start,q_goal,obstacle,width,height,origin,goal] = map (maze_type)
+    width = 500*2;
+    height = 500*2;
+
+    origin = [200,-200,0,0,0];%[x,y,theta,vy,r]
+    goal = [-200,-200,0,0,0];
+    % box
+    obstacle = zeros(4,2,2); 
+    obstacle(1,:,:) = [1,1;-1,1];
+    obstacle(2,:,:) = [-1,1;-1,-1];
+    obstacle(3,:,:) = [-1,-1;1,-1];
+    obstacle(4,:,:) = [1,-1;1,1];
+    offset = 0;
+    obstacle = obstacle*100 + ones(4,2,2)*offset;
+%     offset_array_x = ones(4,2,2);
+%     offset_array_x = offset_array_x(:,:,2)
+%     temp_obstacle = [temp_obstacle; obstacle*100 + ones(4,2,2)*offset]
+    obstacle(5,:,:) = [100,-100;100,-500];
+    obstacle(6,:,:) = [-100,100;-100,400];
+    obstacle(7,:,:) = [-100,0;-400,0];
+%     obstacle(8,:,:) = [0,300;0,500];
+%     obstacle(9,:,:) = [200,300;0,300]*-1;
+%     obstacle(10,:,:) = [200,300;200,500]*-1;
+%     obstacle(11,:,:) = [0,300;0,500]*-1;
+%     obstacle(12,:,:) = [-200,-100;-500,-100];
+%     obstacle(10,:,:) = [200,300;200,500];
+%     obstacle(11,:,:) = [0,300;0,500];
+
+    iterations = 4000 ;
+    q_start.coord = origin;
+    q_start.input = 0;
+    q_start.cost = 0;
+    q_start.parent = origin;
+    q_goal.cost = 0;
+    q_goal.coord = goal;
+    q_goal.input = 0;
 
 end
 

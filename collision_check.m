@@ -3,8 +3,8 @@
 %  collide = 1; 
 %  return   
     for i = 1:length(obstacle)
-         p1 = [obstacle(i,1,1),obstacle(i,2,1)];
-         q1 = [obstacle(i,1,2),obstacle(i,2,2)];
+         p1 = [obstacle(i,1,1),obstacle(i,1,2)];
+         q1 = [obstacle(i,2,1),obstacle(i,2,2)];
          o1 = orientation(p_nearest,p_new,p1);
          o2 = orientation(p_nearest,p_new,q1);
          o3 = orientation(p1,q1,p_nearest);     
