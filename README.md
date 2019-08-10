@@ -28,7 +28,9 @@ Has the proofs of why rrtstar is garunteed to converge to optimal soln while reg
 It has Dyanamics of the vehicle inetegrated in to the planner.Hence only generates dyanmically feasable trajectories.   
 * The sampling space is 1000x1000 m 
 * Speed is 10 m/s  
-* Bicycle model of car dynamics is used.
+* Bicycle model of car dynamics is used.   
+   
+Based on [Path Planning using a Dynamic Vehicle Model](http://www.cs.cmu.edu/~motionplanning/reading/PlanningforDynamicVeh-1.pdf)    
    
    
 ![Sample output from the Program](https://github.com/mhathiyari/RRT_Experimentation/blob/master/RRT%20basic_dynamics.png)
