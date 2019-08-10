@@ -14,7 +14,7 @@ Based on [Incremental Sampling-based Algorithms for Optimal Motion Planning](htt
    
    
 ## RRTStar  
-This assumes no dynamic constriants.Inlcudes Rewire step.  
+This assumes no dynamic constriants.Inlcudes rewire step.  
 Grid is a 5x5 unit  
 Based on [Optimal Kinodynamic Motion Planning using Incremental Sampling-based Methods](https://ieeexplore.ieee.org/document/5717430)   
 Has the proofs of why rrtstar is garunteed to converge to optimal soln while regular rrt isn't  
@@ -23,9 +23,9 @@ Has the proofs of why rrtstar is garunteed to converge to optimal soln while reg
 
 
 
-## RRTStar_Dynamics has intergrated car dynamics with bicycle model  
+## RRTStar_Dynamics (Intergrated car dynamics with bicycle model  
    
-It has Dyanamics of the vehicle inetegrated in to the planner.Hence only generates dyanmically feasable trajectories.   
+It has dynamics of the vehicle inetegrated in to the planner.Hence only generates dynamically feasable trajectories.   
 * The sampling space is 1000x1000 m 
 * Speed is 10 m/s  
 * Bicycle model of car dynamics is used.   
